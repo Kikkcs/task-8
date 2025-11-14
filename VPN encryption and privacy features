@@ -1,0 +1,55 @@
+VPN Protocols & Encryption Algorithm
+The protocol a VPN uses largely determines how your data is encrypted, how keys are exchanged, and how secure / efficient the tunnel is. Here are the main ones:
+Protocol	Encryption / Cryptography	Strengths & Trade-offs
+
+OpenVPN	Uses TLS (via OpenSSL) for key exchange, symmetric ciphers like AES. Commonly AES-256 is used. 
+Very secure, widely audited, highly configurable. Slightly more complex; performance depends on implementation.
+
+WireGuard	Uses ChaCha20 for encryption, Poly1305 for authentication, modern curve (Curve25519) for key exchange. 
+Lightweight, very fast, simpler codebase (smaller attack surface), but traditionally lacked some advanced features.
+
+IKEv2 / IPSec	Often paired with AES (AES-128 or AES-256), uses IPSec for authentication + encryption. 
+Good performance, especially for mobile (can reconnect when networks change). Config complexity can be higher; depends on implementation.
+
+L2TP / IPsec	L2TP itself doesn’t encrypt; encryption comes from IPSec (AES or 3DES) when combined. 
+Fairly secure if properly implemented, but double encapsulation adds overhead. 
+
+PPTP	Uses MPPE (128-bit) encryption. 
+Very weak by modern standards. Often considered insecure; not recommended. 
+
+
+Key Exchange & Forward Secrecy
+VPNs use asymmetric cryptography (e.g., Diffie-Hellman, elliptic-curve) to securely exchange session keys.
+Perfect Forward Secrecy (PFS): Many VPNs support PFS, which means session keys are ephemeral (not reused). If someone compromises one session, they can't decrypt past or future sessions.
+Emerging: Post-quantum key exchange. Some VPNs (e.g. Windscribe) have started integrating quantum-resistant algorithms so that the key exchange is safer against future quantum computers. 
+VPN providers are beginning to support PQE (Post-Quantum Encryption). 
+
+
+No-Logs Policy
+What is it? It means the VPN provider claims not to keep certain user-identifiable logs — such as connection timestamps, IP addresses, browsing history, or DNS queries. 
+Why it's critical: Since your traffic is decrypted at the VPN server, the provider potentially has visibility. A strong no-logs policy protects your privacy from the provider itself. 
+
+Real-world trust: The best VPNs get independent third-party audits to verify their no-logs claims. 
+Caveats: “No-logs” doesn’t always mean zero data kept. Some minimal operational logs may be maintained (e.g., for debugging or preventing abuse), but privacy-focused providers limit these as much as possible. 
+
+Leak Protection
+DNS leak protection: Ensures your DNS queries (which convert domain names to IP addresses) go through the encrypted tunnel rather than your ISP’s DNS servers, preventing DNS-based snooping. 
+Kill switch: A feature that cuts off your internet (or particular apps) if the VPN connection drops, preventing your traffic from leaking outside the VPN tunnel. 
+Split tunneling: Lets you choose which traffic goes through the VPN and which doesn’t — useful for optimizing performance or using local services while still protecting sensitive traffic.
+
+Server Security
+Some VPN providers use RAM-only (diskless) servers: this means data can't be stored permanently and is wiped on reboot, improving security and reducing risk of persistent logs.
+Full-disk encryption on VPN servers ensures server-side sensitive data (like certificates) remains encrypted even if the server is compromised. 
+Obfuscation / Traffic masking: To hide the fact that you're using a VPN (helpful in restrictive networks), some VPNs use obfuscation techniques, or special protocols that mimic normal HTTPS traffic.
+
+Privacy Enhancements / Additional Features
+Browser fingerprinting protection: Some VPNs (e.g., Windscribe) add anti-fingerprinting features in their browser extensions to make it harder for websites to track you via device/browser fingerprints. 
+Post-quantum security: As mentioned, some VPNs now support quantum-resistant key exchange to protect against future quantum-computing threats. 
+Metadata minimization: Good VPNs try to minimize metadata (e.g., how long you connect, which server) to reduce privacy risk. Nym’s blog explains how even without content logs, metadata can be sensitive. 
+Transparency reporting: Trustworthy VPNs may publish reports on data requests, server audits, and their internal policies.
+
+Risks, Limitations, and Attack Vectors
+Fingerprintability: Even with encryption, some VPN protocols (like OpenVPN) can be fingerprinted via packet size, timing, or other attributes. 
+Metadata leaks: Encryption protects data content, but not necessarily all metadata (e.g., connection timing, packet sizes) — these can still leak and be analyzed. 
+Quantum risk (in future): Without post-quantum cryptography, future quantum computers might crack traditional key-exchange mechanisms, making forward security critical.
+Trust in the VPN provider: Even if technical encryption is strong, if the provider is untrustworthy (keeps logs, shares data, or is in a surveillance-heavy jurisdiction), your privacy could be compromised.
